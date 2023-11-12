@@ -5,18 +5,17 @@
 
 #include "print.c"
 
-
 #define MIN_MERGE 32
 
 // Function to perform Bubble Sort iteratively
-void bubbleSort(int arr[], size_t n)
+void bubbleSort(int arr[], int n)
 {
     toString(arr, n);
     int swapped;
-    for (size_t i = 0; i < n - 1; i++)
+    for (int i = 0; i < n - 1; i++)
     {
         swapped = 0;
-        for (size_t j = 0; j < n - i - 1; j++)
+        for (int j = 0; j < n - i - 1; j++)
             if (arr[j] > arr[j + 1])
             {
                 // Swap arr[j] and arr[j+1]
@@ -31,51 +30,50 @@ void bubbleSort(int arr[], size_t n)
 }
 
 // Function to perform iterative selection sort on an array of integers
-void selectionSort(int arr[], size_t n)
+void selectionSort(int arr[], int n)
 {
     toString(arr, n);
-    for (size_t i = 0; i < n - 1; i++)
+    for (int i = 0; i < n - 1; i++)
     {
-        size_t min_index = i;
-        for (size_t j = i + 1; j < n; j++)
+        int min_index = i;
+        for (int j = i + 1; j < n; j++)
             if (arr[j] < arr[min_index])
                 min_index = j;
 
         // Swap the found minimum element with the first element
         arr[min_index] = arr[min_index] + arr[i] - (arr[i] = arr[min_index]);
-
     }
     toString(arr, n);
 }
 
-void insertionSort(int arr[], size_t n)
+void insertionSort(int arr[], int n)
 {
     toString(arr, n);
-    for (size_t i = 1; i < n; i++)
+    int i, key, j;
+    for (i = 1; i < n; i++)
     {
-        int key = arr[i];
-        size_t j = i - 1;
+        key = arr[i];
+        j = i - 1;
 
-        // Move elements that are greater than key to one position ahead of their current position
+        // Move elements of arr[0..i-1] that are greater than key to one position ahead of their current position
         while (j >= 0 && arr[j] > key)
         {
             arr[j + 1] = arr[j];
-            j--;
+            j = j - 1;
         }
-
         arr[j + 1] = key;
     }
     toString(arr, n);
 }
 
-void bucketSort(int arr[], size_t n)
+void bucketSort(int arr[], int n)
 {
     toString(arr, n);
     int max = arr[0];
     int min = arr[0];
 
     // Find the maximum and minimum values in the array
-    for (size_t i = 1; i < n; i++)
+    for (int i = 1; i < n; i++)
     {
         if (arr[i] > max)
             max = arr[i];
@@ -89,30 +87,30 @@ void bucketSort(int arr[], size_t n)
 
     // Create an array of buckets
     int **buckets = (int **)malloc(n * sizeof(int *));
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         buckets[i] = (int *)malloc(n * sizeof(int));
 
     // Initialize each bucket
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         buckets[i][0] = 0; // Bucket size
 
     // Distribute elements into buckets
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
-        size_t index = (arr[i] - min) / range;
-        size_t size = ++buckets[index][0];
+        int index = (arr[i] - min) / range;
+        int size = ++buckets[index][0];
         buckets[index][size] = arr[i];
     }
 
     // Sort each bucket and update the original array
-    size_t index = 0;
-    for (size_t i = 0; i < n; i++)
+    int index = 0;
+    for (int i = 0; i < n; i++)
     {
-        size_t size = buckets[i][0];
+        int size = buckets[i][0];
         if (size > 0)
         {
             insertionSort(buckets[i] + 1, size);
-            for (size_t j = 1; j <= size; j++)
+            for (int j = 1; j <= size; j++)
                 arr[index++] = buckets[i][j];
         }
         free(buckets[i]);
@@ -122,14 +120,14 @@ void bucketSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void shellSort(int arr[], size_t n)
+void shellSort(int arr[], int n)
 {
     toString(arr, n);
-    for (size_t gap = n / 2; gap > 0; gap /= 2)
-        for (size_t i = gap; i < n; i++)
+    for (int gap = n / 2; gap > 0; gap /= 2)
+        for (int i = gap; i < n; i++)
         {
             int temp = arr[i];
-            size_t j;
+            int j;
             for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)
                 arr[j] = arr[j - gap];
 
@@ -138,24 +136,24 @@ void shellSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void merge(int arr[], size_t left_start, size_t mid, size_t right_end)
+void merge(int arr[], int left_start, int mid, int right_end)
 {
     toString(arr, right_end - left_start + 1);
-    size_t left_size = mid - left_start + 1;
-    size_t right_size = right_end - mid;
+    int left_size = mid - left_start + 1;
+    int right_size = right_end - mid;
 
     int *left_arr = (int *)malloc(left_size * sizeof(int));
     int *right_arr = (int *)malloc(right_size * sizeof(int));
 
-    for (size_t i = 0; i < left_size; i++)
+    for (int i = 0; i < left_size; i++)
         left_arr[i] = arr[left_start + i];
 
-    for (size_t i = 0; i < right_size; i++)
+    for (int i = 0; i < right_size; i++)
         right_arr[i] = arr[mid + 1 + i];
 
-    size_t i = 0;
-    size_t j = 0;
-    size_t k = left_start;
+    int i = 0;
+    int j = 0;
+    int k = left_start;
 
     while (i < left_size && j < right_size)
     {
@@ -191,12 +189,12 @@ void merge(int arr[], size_t left_start, size_t mid, size_t right_end)
     toString(arr, right_end - left_start + 1);
 }
 
-void insertionSorted(int arr[], size_t left, size_t right)
+void insertionSorted(int arr[], int left, int right)
 {
-    for (size_t i = left + 1; i <= right; i++)
+    for (int i = left + 1; i <= right; i++)
     {
         int key = arr[i];
-        size_t j = i - 1;
+        int j = i - 1;
         while (j >= left && arr[j] > key)
         {
             arr[j + 1] = arr[j];
@@ -206,22 +204,22 @@ void insertionSorted(int arr[], size_t left, size_t right)
     }
 }
 
-void timSort(int arr[], size_t n)
+void timSort(int arr[], int n)
 {
     toString(arr, n);
-    for (size_t i = 0; i < n; i += MIN_MERGE)
+    for (int i = 0; i < n; i += MIN_MERGE)
     {
-        size_t left = i;
-        size_t right = (i + MIN_MERGE - 1 < n - 1) ? (i + MIN_MERGE - 1) : (n - 1);
+        int left = i;
+        int right = (i + MIN_MERGE - 1 < n - 1) ? (i + MIN_MERGE - 1) : (n - 1);
         insertionSorted(arr, left, right);
     }
 
-    for (size_t size = MIN_MERGE; size < n; size = 2 * size)
+    for (int size = MIN_MERGE; size < n; size = 2 * size)
     {
-        for (size_t left = 0; left < n; left += 2 * size)
+        for (int left = 0; left < n; left += 2 * size)
         {
-            size_t mid = left + size - 1;
-            size_t right = (left + 2 * size - 1 < n - 1) ? (left + 2 * size - 1) : (n - 1);
+            int mid = left + size - 1;
+            int right = (left + 2 * size - 1 < n - 1) ? (left + 2 * size - 1) : (n - 1);
             merge(arr, left, mid, right);
         }
     }
@@ -255,7 +253,7 @@ int partition(int arr[], int left, int right)
     return i + 1;
 }
 
-void quickSort(int arr[], size_t n)
+void quickSort(int arr[], int n)
 {
     toString(arr, n);
     // Create an auxiliary stack
@@ -301,12 +299,12 @@ void quickSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void countingSort(int arr[], size_t n)
+void countingSort(int arr[], int n)
 {
     toString(arr, n);
     // Find the maximum element to determine the range
     int max = arr[0];
-    for (size_t i = 1; i < n; i++)
+    for (int i = 1; i < n; i++)
         if (arr[i] > max)
             max = arr[i];
 
@@ -318,7 +316,7 @@ void countingSort(int arr[], size_t n)
         count[i] = 0;
 
     // Store count of each element
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         count[arr[i]]++;
 
     // Modify count array to store actual position of elements
@@ -334,7 +332,7 @@ void countingSort(int arr[], size_t n)
     }
 
     // Copy the sorted elements back to the original array
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         arr[i] = output[i];
 
     free(count);
@@ -342,7 +340,7 @@ void countingSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-size_t getNextGap(size_t gap)
+int getNextGap(int gap)
 {
     // Shrink gap by a factor of 1.3
     gap = (gap * 10) / 13;
@@ -350,10 +348,10 @@ size_t getNextGap(size_t gap)
     return (gap < 1) ? 1 : gap;
 }
 
-void combSort(int arr[], size_t n)
+void combSort(int arr[], int n)
 {
     toString(arr, n);
-    size_t gap = n;
+    int gap = n;
 
     bool swapped = true;
 
@@ -363,7 +361,7 @@ void combSort(int arr[], size_t n)
 
         swapped = false;
 
-        for (size_t i = 0; i < n - gap; i++)
+        for (int i = 0; i < n - gap; i++)
             if (arr[i] > arr[i + gap])
             {
                 swap(&arr[i], &arr[i + gap]);
@@ -373,14 +371,14 @@ void combSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void pigeonholeSort(int arr[], size_t n)
+void pigeonholeSort(int arr[], int n)
 {
     toString(arr, n);
     int min = arr[0];
     int max = arr[0];
 
     // Find the minimum and maximum values in the array
-    for (size_t i = 1; i < n; i++)
+    for (int i = 1; i < n; i++)
     {
         if (arr[i] < min)
             min = arr[i];
@@ -389,20 +387,20 @@ void pigeonholeSort(int arr[], size_t n)
             max = arr[i];
     }
 
-    size_t range = max - min + 1;
+    int range = max - min + 1;
     int *pigeonholes = (int *)malloc(range * sizeof(int));
 
     // Initialize pigeonholes
-    for (size_t i = 0; i < range; i++)
+    for (int i = 0; i < range; i++)
         pigeonholes[i] = 0;
 
     // Count occurrences of each element in the array
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         pigeonholes[arr[i] - min]++;
 
     // Fill the original array with sorted values
-    size_t index = 0;
-    for (size_t i = 0; i < range; i++)
+    int index = 0;
+    for (int i = 0; i < range; i++)
         while (pigeonholes[i] > 0)
         {
             arr[index++] = i + min;
@@ -413,15 +411,15 @@ void pigeonholeSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void cycleSort(int arr[], size_t n)
+void cycleSort(int arr[], int n)
 {
     toString(arr, n);
-    for (size_t cycleStart = 0; cycleStart < n - 1; cycleStart++)
+    for (int cycleStart = 0; cycleStart < n - 1; cycleStart++)
     {
         int item = arr[cycleStart];
 
-        size_t pos = cycleStart;
-        for (size_t i = cycleStart + 1; i < n; i++)
+        int pos = cycleStart;
+        for (int i = cycleStart + 1; i < n; i++)
             if (arr[i] < item)
                 pos++;
 
@@ -437,7 +435,7 @@ void cycleSort(int arr[], size_t n)
         while (pos != cycleStart)
         {
             pos = cycleStart;
-            for (size_t i = cycleStart + 1; i < n; i++)
+            for (int i = cycleStart + 1; i < n; i++)
                 if (arr[i] < item)
                     pos++;
 
@@ -451,7 +449,7 @@ void cycleSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void cocktailShakerSort(int arr[], size_t n)
+void cocktailShakerSort(int arr[], int n)
 {
     toString(arr, n);
     int swapped;
@@ -460,7 +458,7 @@ void cocktailShakerSort(int arr[], size_t n)
     {
         // Perform a forward pass
         swapped = 0;
-        for (size_t i = 0; i < n - 1; i++)
+        for (int i = 0; i < n - 1; i++)
             if (arr[i] > arr[i + 1])
             {
                 swap(&arr[i], &arr[i + 1]);
@@ -472,7 +470,7 @@ void cocktailShakerSort(int arr[], size_t n)
 
         // Perform a backward pass
         swapped = 0;
-        for (size_t i = n - 1; i > 0; i--)
+        for (int i = n - 1; i > 0; i--)
             if (arr[i] < arr[i - 1])
             {
                 swap(&arr[i], &arr[i - 1]);
@@ -482,47 +480,47 @@ void cocktailShakerSort(int arr[], size_t n)
     toString(arr, n);
 }
 
-void beadSort(int arr[], size_t n)
+void beadSort(int arr[], int n)
 {
     toString(arr, n);
     int *beads = (int *)calloc(n, sizeof(int));
 
     // Store beads
-    for (size_t i = 0; i < n; i++)
-        for (size_t j = 0; j < arr[i]; j++)
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < arr[i]; j++)
             beads[i * n + j] = 1;
 
     // Count beads in each column
-    for (size_t j = 0; j < n; j++)
+    for (int j = 0; j < n; j++)
     {
-        size_t sum = 0;
-        for (size_t i = 0; i < n; i++)
+        int sum = 0;
+        for (int i = 0; i < n; i++)
         {
             sum += beads[i * n + j];
             beads[i * n + j] = 0;
         }
         // Place beads in the array
-        for (size_t i = n - sum; i < n; i++)
+        for (int i = n - sum; i < n; i++)
             beads[i * n + j] = 1;
     }
 
     // Retrieve sorted values
-    for (size_t i = 0; i < n; i++)
-        for (size_t j = 0; j < n && beads[i * n + j]; j++)
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n && beads[i * n + j]; j++)
             arr[i] = j + 1;
 
     free(beads);
     toString(arr, n);
 }
 
-/*void sleepSort(int arr[], size_t n) {
+/*void sleepSort(int arr[], int n) {
     pthread_t threads[n];
 
     // Sleep function for each element
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         pthread_create(&threads[i], NULL, (void *(*)(void *))sleep, (void *)(intptr_t)arr[i]);
 
     // Wait for all threads to finish
-    for (size_t i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         pthread_join(threads[i], NULL);
 }*/
