@@ -419,95 +419,13 @@ void cocktailShakerSort(int arr[], int n)
     toString(arr, n);
 }
 
-void countingSort(int arr[], int n)
-{
-    toString(arr, n);
-    int output[10];
-
-    // Find the largest element of the array
-    int max = arr[0];
-    for (int i = 1; i < n; i++)
-        if (arr[i] > max)
-            max = arr[i];
-
-    // The size of count must be at least (max+1) but
-    // we cannot declare it as int count(max+1) in C as
-    // it does not support dynamic memory allocation.
-    // So, its size is provided statically.
-    int count[10];
-
-    // Initialize count array with all zeros.
-    for (int i = 0; i <= max; i++)
-        count[i] = 0;
-
-    // Store the count of each element
-    for (int i = 0; i < n; i++)
-        count[arr[i]]++;
-
-    // Store the cummulative count of each array
-    for (int i = 1; i <= max; i++)
-        count[i] += count[i - 1];
-
-    // Find the index of each element of the original array in count array, and
-    // place the elements in output array
-    for (int i = n - 1; i >= 0; i--)
-    {
-        output[count[arr[i]] - 1] = arr[i];
-        count[arr[i]]--;
-    }
-
-    // Copy the sorted elements into original array
-    for (int i = 0; i < n; i++)
-        arr[i] = output[i];
-
-    toString(arr, n);
-}
-
-void cycleSort(int arr[], int n)
-{
-    toString(arr, n);
-    for (int cycleStart = 0; cycleStart < n - 1; cycleStart++)
-    {
-        int item = arr[cycleStart];
-
-        int pos = cycleStart;
-        for (int i = cycleStart + 1; i < n; i++)
-            if (arr[i] < item)
-                pos++;
-
-        if (pos == cycleStart)
-            continue;
-
-        while (item == arr[pos])
-            pos++;
-
-        int temp = arr[pos];
-        arr[pos] = item;
-
-        while (pos != cycleStart)
-        {
-            pos = cycleStart;
-            for (int i = cycleStart + 1; i < n; i++)
-                if (arr[i] < item)
-                    pos++;
-
-            while (item == arr[pos])
-                pos++;
-
-            temp = arr[pos];
-            arr[pos] = item;
-        }
-    }
-    toString(arr, n);
-}
-
 void beadSort(int *a, int len)
 {
-    //Only for + integers
+    // Only for + integers
     toString(a, len);
     int i, j, max, sum;
     unsigned char *beads;
-    #define BEAD(i, j) beads[i * max + j]
+#define BEAD(i, j) beads[i * max + j]
 
     for (i = 1, max = a[0]; i < len; i++)
         if (a[i] > max)
@@ -541,6 +459,102 @@ void beadSort(int *a, int len)
     }
     free(beads);
     toString(a, len);
+}
+
+/*function to implement to cycle sort*/
+void cycleSort(int a[], int n)
+{
+    toString(a, n);
+
+    int start, element, pos, temp, i;
+
+    /*Loop to traverse the array elements and place them on the correct position*/
+    for (start = 0; start <= n - 2; start++)
+    {
+        element = a[start];
+
+        /*position to place the element*/
+        pos = start;
+
+        for (i = start + 1; i < n; i++)
+            if (a[i] < element)
+                pos++;
+        if (pos == start) /*if the element is at exact position*/
+            continue;
+        while (element == a[pos])
+            pos += 1;
+        if (pos != start) /*put element at its exact position*/
+        {
+            // swap(element, a[pos]);
+            temp = element;
+            element = a[pos];
+            a[pos] = temp;
+        }
+        /*Rotate rest of the elements*/
+        while (pos != start)
+        {
+            pos = start;
+            /*find position to put the element*/
+            for (i = start + 1; i < n; i++)
+                if (a[i] < element)
+                    pos += 1;
+
+            /*Ignore duplicate elements*/
+            while (element == a[pos])
+                pos += 1;
+
+            /*put element to its correct position*/
+            if (element != a[pos])
+            {
+                temp = element;
+                element = a[pos];
+                a[pos] = temp;
+            }
+        }
+    }
+    toString(a, n);
+}
+
+int getMax(int a[], int n)
+{
+    int max = a[0];
+
+    for (int i = 1; i < n; i++)
+        if (a[i] > max)
+            max = a[i];
+
+    return max; // maximum element from the array
+}
+
+void countingSort(int a[], int n) // function to perform counting sort
+{
+    toString(a, n);
+
+    int output[n + 1];
+    int max = getMax(a, n);
+    int count[max + 1]; // create count array with size [max+1]
+
+    for (int i = 0; i <= max; ++i)
+        count[i] = 0; // Initialize count array with all zeros
+
+    for (int i = 0; i < n; i++) // Store the count of each element
+        count[a[i]]++;
+
+    for (int i = 1; i <= max; i++)
+        count[i] += count[i - 1]; // find cumulative frequency
+
+    /* This loop will find the index of each element of the original array in count array, and
+     place the elements in output array*/
+    for (int i = n - 1; i >= 0; i--)
+    {
+        output[count[a[i]] - 1] = a[i];
+        count[a[i]]--; // decrease count for same numbers
+    }
+
+    for (int i = 0; i < n; i++)
+        a[i] = output[i]; // store the sorted elements into main array
+
+    toString(a, n);
 }
 
 /*void sleepSort(int arr[], int n) {
