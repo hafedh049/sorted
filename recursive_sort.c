@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
 
 // Function to perform Bubble Sort recursively
 void recursiveBubbleSort(int arr[], int n)
@@ -273,9 +276,43 @@ void shuffle(int arr[], size_t n) {
     }
 }
 
-void optimizedBogoSort(int arr[], size_t n) {
+void recursiveBogoSort(int arr[], size_t n) {
     srand(time(NULL));
 
     while (!isSorted(arr, n))
         shuffle(arr, n);
 }
+
+void recursiveStoogeSorter(int arr[], size_t low, size_t high) {
+    if (low >= high)
+        return;
+
+    if (arr[low] > arr[high])
+        swap(&arr[low], &arr[high]);
+
+    if (high - low + 1 > 2) {
+        size_t t = (high - low + 1) / 3;
+        recursiveStoogeSorter(arr, low, high - t);
+        recursiveStoogeSorter(arr, low + t, high);
+        recursiveStoogeSorter(arr, low, high - t);
+    }
+}
+
+void recursiveStoogeSort(int arr[], size_t n) {
+    recursiveStoogeSorter(arr, 0, n - 1);
+}
+
+/*void recursiveSleepSort(int arr[], size_t n) {
+    if (n == 0)
+        return;
+
+    // Create a thread to sleep for the value of the first element
+    pthread_t thread;
+    pthread_create(&thread, NULL, (void *(*)(void *))sleep, (void *)(intptr_t)arr[0]);
+
+    // Sort the remaining elements using recursion
+    sleepSortRecursive(arr + 1, n - 1);
+
+    // Wait for the thread to finish
+    pthread_join(thread, NULL);
+}*/
