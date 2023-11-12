@@ -136,57 +136,75 @@ void shellSort(int arr[], int n)
     toString(arr, n);
 }
 
-void merge(int arr[], int left_start, int mid, int right_end)
+void merge(int arr[], int left, int middle, int right)
 {
-    toString(arr, right_end - left_start + 1);
-    int left_size = mid - left_start + 1;
-    int right_size = right_end - mid;
+    int i, j, k;
+    int n1 = middle - left + 1;
+    int n2 = right - middle;
 
-    int *left_arr = (int *)malloc(left_size * sizeof(int));
-    int *right_arr = (int *)malloc(right_size * sizeof(int));
+    // Create temporary arrays
+    int L[n1], R[n2];
 
-    for (int i = 0; i < left_size; i++)
-        left_arr[i] = arr[left_start + i];
+    // Copy data to temporary arrays L[] and R[]
+    for (i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[middle + 1 + j];
 
-    for (int i = 0; i < right_size; i++)
-        right_arr[i] = arr[mid + 1 + i];
+    // Merge the temporary arrays back into arr[left..right]
+    i = 0;
+    j = 0;
+    k = left;
 
-    int i = 0;
-    int j = 0;
-    int k = left_start;
-
-    while (i < left_size && j < right_size)
+    while (i < n1 && j < n2)
     {
-        if (left_arr[i] <= right_arr[j])
+        if (L[i] <= R[j])
         {
-            arr[k] = left_arr[i];
+            arr[k] = L[i];
             i++;
         }
         else
         {
-            arr[k] = right_arr[j];
+            arr[k] = R[j];
             j++;
         }
         k++;
     }
 
-    while (i < left_size)
+    // Copy the remaining elements of L[], if there are any
+    while (i < n1)
     {
-        arr[k] = left_arr[i];
+        arr[k] = L[i];
         i++;
         k++;
     }
 
-    while (j < right_size)
+    // Copy the remaining elements of R[], if there are any
+    while (j < n2)
     {
-        arr[k] = right_arr[j];
+        arr[k] = R[j];
         j++;
         k++;
     }
+}
 
-    free(left_arr);
-    free(right_arr);
-    toString(arr, right_end - left_start + 1);
+void mergeSort(int arr[], int left, int right)
+{
+    toString(arr, right - left + 1);
+
+    if (left < right)
+    {
+        // Same as (left+right)/2, but avoids overflow for large left and right
+        int middle = left + (right - left) / 2;
+
+        // Sort first and second halves
+        mergeSort(arr, left, middle);
+        mergeSort(arr, middle + 1, right);
+
+        // Merge the sorted halves
+        merge(arr, left, middle, right);
+    }
+    toString(arr, right - left + 1);
 }
 
 void insertionSorted(int arr[], int left, int right)
@@ -299,47 +317,6 @@ void quickSort(int arr[], int n)
     toString(arr, n);
 }
 
-void countingSort(int arr[], int n)
-{
-    toString(arr, n);
-    // Find the maximum element to determine the range
-    int max = arr[0];
-    for (int i = 1; i < n; i++)
-        if (arr[i] > max)
-            max = arr[i];
-
-    // Create an array to store count of each element
-    int *count = (int *)malloc((max + 1) * sizeof(int));
-
-    // Initialize count array to 0
-    for (int i = 0; i <= max; i++)
-        count[i] = 0;
-
-    // Store count of each element
-    for (int i = 0; i < n; i++)
-        count[arr[i]]++;
-
-    // Modify count array to store actual position of elements
-    for (int i = 1; i <= max; i++)
-        count[i] += count[i - 1];
-
-    // Build the output array
-    int *output = (int *)malloc(n * sizeof(int));
-    for (int i = n - 1; i >= 0; i--)
-    {
-        output[count[arr[i]] - 1] = arr[i];
-        count[arr[i]]--;
-    }
-
-    // Copy the sorted elements back to the original array
-    for (int i = 0; i < n; i++)
-        arr[i] = output[i];
-
-    free(count);
-    free(output);
-    toString(arr, n);
-}
-
 int getNextGap(int gap)
 {
     // Shrink gap by a factor of 1.3
@@ -411,6 +388,81 @@ void pigeonholeSort(int arr[], int n)
     toString(arr, n);
 }
 
+void cocktailShakerSort(int arr[], int n)
+{
+    toString(arr, n);
+    int swapped;
+
+    do
+    {
+        // Perform a forward pass
+        swapped = 0;
+        for (int i = 0; i < n - 1; i++)
+            if (arr[i] > arr[i + 1])
+            {
+                swap(&arr[i], &arr[i + 1]);
+                swapped = 1;
+            }
+
+        if (!swapped)
+            break; // If no swapping occurred, the array is sorted
+
+        // Perform a backward pass
+        swapped = 0;
+        for (int i = n - 1; i > 0; i--)
+            if (arr[i] < arr[i - 1])
+            {
+                swap(&arr[i], &arr[i - 1]);
+                swapped = 1;
+            }
+    } while (swapped);
+    toString(arr, n);
+}
+
+void countingSort(int arr[], int n)
+{
+    toString(arr, n);
+    int output[10];
+
+    // Find the largest element of the array
+    int max = arr[0];
+    for (int i = 1; i < n; i++)
+        if (arr[i] > max)
+            max = arr[i];
+
+    // The size of count must be at least (max+1) but
+    // we cannot declare it as int count(max+1) in C as
+    // it does not support dynamic memory allocation.
+    // So, its size is provided statically.
+    int count[10];
+
+    // Initialize count array with all zeros.
+    for (int i = 0; i <= max; i++)
+        count[i] = 0;
+
+    // Store the count of each element
+    for (int i = 0; i < n; i++)
+        count[arr[i]]++;
+
+    // Store the cummulative count of each array
+    for (int i = 1; i <= max; i++)
+        count[i] += count[i - 1];
+
+    // Find the index of each element of the original array in count array, and
+    // place the elements in output array
+    for (int i = n - 1; i >= 0; i--)
+    {
+        output[count[arr[i]] - 1] = arr[i];
+        count[arr[i]]--;
+    }
+
+    // Copy the sorted elements into original array
+    for (int i = 0; i < n; i++)
+        arr[i] = output[i];
+
+    toString(arr, n);
+}
+
 void cycleSort(int arr[], int n)
 {
     toString(arr, n);
@@ -449,68 +501,46 @@ void cycleSort(int arr[], int n)
     toString(arr, n);
 }
 
-void cocktailShakerSort(int arr[], int n)
+void beadSort(int *a, int len)
 {
-    toString(arr, n);
-    int swapped;
+    //Only for + integers
+    toString(a, len);
+    int i, j, max, sum;
+    unsigned char *beads;
+    #define BEAD(i, j) beads[i * max + j]
 
-    do
+    for (i = 1, max = a[0]; i < len; i++)
+        if (a[i] > max)
+            max = a[i];
+
+    beads = calloc(1, max * len);
+
+    /* mark the beads */
+    for (i = 0; i < len; i++)
+        for (j = 0; j < a[i]; j++)
+            BEAD(i, j) = 1;
+
+    for (j = 0; j < max; j++)
     {
-        // Perform a forward pass
-        swapped = 0;
-        for (int i = 0; i < n - 1; i++)
-            if (arr[i] > arr[i + 1])
-            {
-                swap(&arr[i], &arr[i + 1]);
-                swapped = 1;
-            }
-
-        if (!swapped)
-            break; // If no swapping occurred, the array is sorted
-
-        // Perform a backward pass
-        swapped = 0;
-        for (int i = n - 1; i > 0; i--)
-            if (arr[i] < arr[i - 1])
-            {
-                swap(&arr[i], &arr[i - 1]);
-                swapped = 1;
-            }
-    } while (swapped);
-    toString(arr, n);
-}
-
-void beadSort(int arr[], int n)
-{
-    toString(arr, n);
-    int *beads = (int *)calloc(n, sizeof(int));
-
-    // Store beads
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < arr[i]; j++)
-            beads[i * n + j] = 1;
-
-    // Count beads in each column
-    for (int j = 0; j < n; j++)
-    {
-        int sum = 0;
-        for (int i = 0; i < n; i++)
+        /* count how many beads are on each post */
+        for (sum = i = 0; i < len; i++)
         {
-            sum += beads[i * n + j];
-            beads[i * n + j] = 0;
+            sum += BEAD(i, j);
+            BEAD(i, j) = 0;
         }
-        // Place beads in the array
-        for (int i = n - sum; i < n; i++)
-            beads[i * n + j] = 1;
+        /* mark bottom sum beads */
+        for (i = len - sum; i < len; i++)
+            BEAD(i, j) = 1;
     }
 
-    // Retrieve sorted values
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n && beads[i * n + j]; j++)
-            arr[i] = j + 1;
-
+    for (i = 0; i < len; i++)
+    {
+        for (j = 0; j < max && BEAD(i, j); j++)
+            ;
+        a[i] = j;
+    }
     free(beads);
-    toString(arr, n);
+    toString(a, len);
 }
 
 /*void sleepSort(int arr[], int n) {

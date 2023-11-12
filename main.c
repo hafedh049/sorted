@@ -3,5 +3,5 @@
 
 void main(){
     int arr[6] = {1,-1,0,5,-10,11};
-    insertionSort(arr,6);
+    beadSort(arr,6);
 }
