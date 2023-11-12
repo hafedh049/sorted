@@ -186,3 +186,96 @@ void recursiveRadixSort(int arr[], size_t n) {
         countSort(arr, n, exp);
     }
 }
+
+void swap(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void recursiveBitonicMerge(int arr[], size_t low, size_t cnt, int dir) {
+    if (cnt > 1) {
+        size_t k = cnt / 2;
+        for (size_t i = low; i < low + k; i++) {
+            if (dir == (arr[i] > arr[i + k])) {
+                swap(&arr[i], &arr[i + k]);
+            }
+        }
+        recursiveBitonicMerge(arr, low, k, dir);
+        recursiveBitonicMerge(arr, low + k, k, dir);
+    }
+}
+
+void recursiveBitonicSorter(int arr[], size_t low, size_t cnt, int dir) {
+    if (cnt > 1) {
+        size_t k = cnt / 2;
+
+        // Sort in ascending order
+        recursiveBitonicSorter(arr, low, k, 1);
+
+        // Sort in descending order
+        recursiveBitonicSorter(arr, low + k, k, 0);
+
+        // Merge the entire sequence
+        recursiveBitonicMerge(arr, low, cnt, dir);
+    }
+}
+
+void recursiveBitonicSort(int arr[], size_t n) {
+    bitonicSorter(arr, 0, n, 1);
+}
+
+void flip(int arr[], size_t i) {
+    size_t start = 0;
+    while (start < i) {
+        int temp = arr[start];
+        arr[start] = arr[i];
+        arr[i] = temp;
+        start++;
+        i--;
+    }
+}
+
+size_t findMaxIndex(int arr[], size_t n) {
+    size_t mi, i;
+    for (mi = 0, i = 0; i < n; ++i)
+        if (arr[i] > arr[mi])
+            mi = i;
+    return mi;
+}
+
+void recursivePancakeSort(int arr[], size_t n) {
+    for (size_t curr_size = n; curr_size > 1; --curr_size) {
+        size_t mi = findMaxIndex(arr, curr_size);
+
+        if (mi != curr_size - 1) {
+            flip(arr, mi);
+            flip(arr, curr_size - 1);
+        }
+    }
+}
+
+int isSorted(int arr[], size_t n) {
+    for (size_t i = 0; i < n - 1; i++)
+        if (arr[i] > arr[i + 1])
+            return 0;
+
+    return 1;
+}
+
+void shuffle(int arr[], size_t n) {
+    for (size_t i = n - 1; i > 0; i--) {
+        size_t j = rand() % (i + 1);
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+void optimizedBogoSort(int arr[], size_t n) {
+    srand(time(NULL));
+
+    while (!isSorted(arr, n))
+        shuffle(arr, n);
+}
