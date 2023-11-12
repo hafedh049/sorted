@@ -109,3 +109,80 @@ void recursiveQuickSort(int arr[], size_t low, size_t high)
         }
     }
 }
+
+void heapify(int arr[], size_t n, size_t i) {
+    size_t largest = i;
+    size_t left = 2 * i + 1;
+    size_t right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        // Swap arr[i] and arr[largest]
+        int temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+
+        // Recursively heapify the affected sub-tree
+        heapify(arr, n, largest);
+    }
+}
+
+void recursiveHeapSort(int arr[], size_t n) {
+    // Build max heap
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    // Extract elements from the heap one by one
+    for (int i = n - 1; i > 0; i--) {
+        // Swap the root (maximum element) with the last element
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+
+        // Call heapify on the reduced heap
+        heapify(arr, i, 0);
+    }
+}
+
+int getMax(int arr[], size_t n) {
+    int max = arr[0];
+    for (size_t i = 1; i < n; i++)
+        if (arr[i] > max)
+            max = arr[i];
+    
+    return max;
+}
+
+void countSort(int arr[], size_t n, int exp) {
+    int* output = (int*)malloc(n * sizeof(int));
+    int count[10] = {0};
+
+    for (size_t i = 0; i < n; i++)
+        count[(arr[i] / exp) % 10]++;
+
+    for (int i = 1; i < 10; i++)
+        count[i] += count[i - 1];
+
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+
+    for (size_t i = 0; i < n; i++)
+        arr[i] = output[i];
+
+    free(output);
+}
+
+void recursiveRadixSort(int arr[], size_t n) {
+    int max = getMax(arr, n);
+
+    for (int exp = 1; max / exp > 0; exp *= 10) {
+        countSort(arr, n, exp);
+    }
+}

@@ -184,3 +184,46 @@ void swap(int *a, int *b)
     *a = *b;
     *b = temp;
 }
+
+void countingSort(int arr[], size_t n) {
+    // Find the maximum element to determine the range
+    int max = arr[0];
+    for (size_t i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    // Create an array to store count of each element
+    int* count = (int*)malloc((max + 1) * sizeof(int));
+
+    // Initialize count array to 0
+    for (int i = 0; i <= max; i++) {
+        count[i] = 0;
+    }
+
+    // Store count of each element
+    for (size_t i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+    // Modify count array to store actual position of elements
+    for (int i = 1; i <= max; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Build the output array
+    int* output = (int*)malloc(n * sizeof(int));
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[arr[i]] - 1] = arr[i];
+        count[arr[i]]--;
+    }
+
+    // Copy the sorted elements back to the original array
+    for (size_t i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+
+    free(count);
+    free(output);
+}
