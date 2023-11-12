@@ -2,27 +2,20 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-
 // Function to perform Bubble Sort recursively
 void recursiveBubbleSort(int arr[], int n)
 {
     // Base case: If there is only one element or the array is empty
     if (n <= 1)
-    {
         return;
-    }
 
     // One pass of bubble sort: Move the largest element to the end
     for (int i = 0; i < n - 1; i++)
-    {
         if (arr[i] > arr[i + 1])
         {
             // Swap arr[i] and arr[i+1]
-            int temp = arr[i];
-            arr[i] = arr[i + 1];
-            arr[i + 1] = temp;
+            arr[i] = arr[i] + arr[i + 1] - (arr[i + 1] = arr[i]);
         }
-    }
 
     // Recursively sort the remaining elements
     recursiveBubbleSort(arr, n - 1);
@@ -34,17 +27,11 @@ void findMinAndSwap(int arr[], size_t n, size_t i)
 
     // Find the index of the minimum element in the unsorted part of the array
     for (size_t j = i + 1; j < n; j++)
-    {
         if (arr[j] < arr[min_index])
-        {
             min_index = j;
-        }
-    }
 
     // Swap the found minimum element with the first element
-    int temp = arr[i];
-    arr[i] = arr[min_index];
-    arr[min_index] = temp;
+    arr[i] = arr[i] + arr[min_index] - (arr[min_index] = arr[i]);
 }
 
 // Function to perform recursive selection sort on an array of integers
@@ -77,19 +64,13 @@ size_t optimizedPartition(int arr[], size_t low, size_t high)
     size_t i = low - 1;
 
     for (size_t j = low; j < high; j++)
-    {
         if (arr[j] <= pivot)
         {
             i++;
-            int temp = arr[i];
-            arr[i] = arr[j];
-            arr[j] = temp;
+            arr[i] = arr[i] + arr[j] - (arr[j] = arr[i]);
         }
-    }
 
-    int temp = arr[i + 1];
-    arr[i + 1] = arr[high];
-    arr[high] = temp;
+    arr[i + 1] = arr[i + 1] + arr[high] - (arr[high] = arr[i + 1]);
 
     return i + 1;
 }
@@ -113,7 +94,8 @@ void recursiveQuickSort(int arr[], size_t low, size_t high)
     }
 }
 
-void heapify(int arr[], size_t n, size_t i) {
+void heapify(int arr[], size_t n, size_t i)
+{
     size_t largest = i;
     size_t left = 2 * i + 1;
     size_t right = 2 * i + 2;
@@ -124,45 +106,46 @@ void heapify(int arr[], size_t n, size_t i) {
     if (right < n && arr[right] > arr[largest])
         largest = right;
 
-    if (largest != i) {
+    if (largest != i)
+    {
         // Swap arr[i] and arr[largest]
-        int temp = arr[i];
-        arr[i] = arr[largest];
-        arr[largest] = temp;
+        arr[i] = arr[i] + arr[largest] - (arr[largest] = arr[i]);
 
         // Recursively heapify the affected sub-tree
         heapify(arr, n, largest);
     }
 }
 
-void recursiveHeapSort(int arr[], size_t n) {
+void recursiveHeapSort(int arr[], size_t n)
+{
     // Build max heap
     for (int i = n / 2 - 1; i >= 0; i--)
         heapify(arr, n, i);
 
     // Extract elements from the heap one by one
-    for (int i = n - 1; i > 0; i--) {
+    for (int i = n - 1; i > 0; i--)
+    {
         // Swap the root (maximum element) with the last element
-        int temp = arr[0];
-        arr[0] = arr[i];
-        arr[i] = temp;
+        arr[0] = arr[0] + arr[i] - (arr[i] = arr[0]);
 
         // Call heapify on the reduced heap
         heapify(arr, i, 0);
     }
 }
 
-int getMax(int arr[], size_t n) {
+int getMax(int arr[], size_t n)
+{
     int max = arr[0];
     for (size_t i = 1; i < n; i++)
         if (arr[i] > max)
             max = arr[i];
-    
+
     return max;
 }
 
-void countSort(int arr[], size_t n, int exp) {
-    int* output = (int*)malloc(n * sizeof(int));
+void countSort(int arr[], size_t n, int exp)
+{
+    int *output = (int *)malloc(n * sizeof(int));
     int count[10] = {0};
 
     for (size_t i = 0; i < n; i++)
@@ -171,7 +154,8 @@ void countSort(int arr[], size_t n, int exp) {
     for (int i = 1; i < 10; i++)
         count[i] += count[i - 1];
 
-    for (int i = n - 1; i >= 0; i--) {
+    for (int i = n - 1; i >= 0; i--)
+    {
         output[count[(arr[i] / exp) % 10] - 1] = arr[i];
         count[(arr[i] / exp) % 10]--;
     }
@@ -182,26 +166,30 @@ void countSort(int arr[], size_t n, int exp) {
     free(output);
 }
 
-void recursiveRadixSort(int arr[], size_t n) {
+void recursiveRadixSort(int arr[], size_t n)
+{
     int max = getMax(arr, n);
 
-    for (int exp = 1; max / exp > 0; exp *= 10) {
+    for (int exp = 1; max / exp > 0; exp *= 10)
+    {
         countSort(arr, n, exp);
     }
 }
 
 void swap(int *a, int *b)
 {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+    *a = *a + *b - (*b = *a);
 }
 
-void recursiveBitonicMerge(int arr[], size_t low, size_t cnt, int dir) {
-    if (cnt > 1) {
+void recursiveBitonicMerge(int arr[], size_t low, size_t cnt, int dir)
+{
+    if (cnt > 1)
+    {
         size_t k = cnt / 2;
-        for (size_t i = low; i < low + k; i++) {
-            if (dir == (arr[i] > arr[i + k])) {
+        for (size_t i = low; i < low + k; i++)
+        {
+            if (dir == (arr[i] > arr[i + k]))
+            {
                 swap(&arr[i], &arr[i + k]);
             }
         }
@@ -210,8 +198,10 @@ void recursiveBitonicMerge(int arr[], size_t low, size_t cnt, int dir) {
     }
 }
 
-void recursiveBitonicSorter(int arr[], size_t low, size_t cnt, int dir) {
-    if (cnt > 1) {
+void recursiveBitonicSorter(int arr[], size_t low, size_t cnt, int dir)
+{
+    if (cnt > 1)
+    {
         size_t k = cnt / 2;
 
         // Sort in ascending order
@@ -225,13 +215,16 @@ void recursiveBitonicSorter(int arr[], size_t low, size_t cnt, int dir) {
     }
 }
 
-void recursiveBitonicSort(int arr[], size_t n) {
+void recursiveBitonicSort(int arr[], size_t n)
+{
     bitonicSorter(arr, 0, n, 1);
 }
 
-void flip(int arr[], size_t i) {
+void flip(int arr[], size_t i)
+{
     size_t start = 0;
-    while (start < i) {
+    while (start < i)
+    {
         int temp = arr[start];
         arr[start] = arr[i];
         arr[i] = temp;
@@ -240,7 +233,8 @@ void flip(int arr[], size_t i) {
     }
 }
 
-size_t findMaxIndex(int arr[], size_t n) {
+size_t findMaxIndex(int arr[], size_t n)
+{
     size_t mi, i;
     for (mi = 0, i = 0; i < n; ++i)
         if (arr[i] > arr[mi])
@@ -248,18 +242,22 @@ size_t findMaxIndex(int arr[], size_t n) {
     return mi;
 }
 
-void recursivePancakeSort(int arr[], size_t n) {
-    for (size_t curr_size = n; curr_size > 1; --curr_size) {
+void recursivePancakeSort(int arr[], size_t n)
+{
+    for (size_t curr_size = n; curr_size > 1; --curr_size)
+    {
         size_t mi = findMaxIndex(arr, curr_size);
 
-        if (mi != curr_size - 1) {
+        if (mi != curr_size - 1)
+        {
             flip(arr, mi);
             flip(arr, curr_size - 1);
         }
     }
 }
 
-int isSorted(int arr[], size_t n) {
+int isSorted(int arr[], size_t n)
+{
     for (size_t i = 0; i < n - 1; i++)
         if (arr[i] > arr[i + 1])
             return 0;
@@ -267,8 +265,10 @@ int isSorted(int arr[], size_t n) {
     return 1;
 }
 
-void shuffle(int arr[], size_t n) {
-    for (size_t i = n - 1; i > 0; i--) {
+void shuffle(int arr[], size_t n)
+{
+    for (size_t i = n - 1; i > 0; i--)
+    {
         size_t j = rand() % (i + 1);
         int temp = arr[i];
         arr[i] = arr[j];
@@ -276,21 +276,24 @@ void shuffle(int arr[], size_t n) {
     }
 }
 
-void recursiveBogoSort(int arr[], size_t n) {
+void recursiveBogoSort(int arr[], size_t n)
+{
     srand(time(NULL));
 
     while (!isSorted(arr, n))
         shuffle(arr, n);
 }
 
-void recursiveStoogeSorter(int arr[], size_t low, size_t high) {
+void recursiveStoogeSorter(int arr[], size_t low, size_t high)
+{
     if (low >= high)
         return;
 
     if (arr[low] > arr[high])
         swap(&arr[low], &arr[high]);
 
-    if (high - low + 1 > 2) {
+    if (high - low + 1 > 2)
+    {
         size_t t = (high - low + 1) / 3;
         recursiveStoogeSorter(arr, low, high - t);
         recursiveStoogeSorter(arr, low + t, high);
@@ -298,7 +301,8 @@ void recursiveStoogeSorter(int arr[], size_t low, size_t high) {
     }
 }
 
-void recursiveStoogeSort(int arr[], size_t n) {
+void recursiveStoogeSort(int arr[], size_t n)
+{
     recursiveStoogeSorter(arr, 0, n - 1);
 }
 

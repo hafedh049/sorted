@@ -8,6 +8,7 @@
 // Function to perform Bubble Sort iteratively
 void bubbleSort(int arr[], size_t n)
 {
+    toString(arr, n);
     int swapped;
     for (size_t i = 0; i < n - 1; i++)
     {
@@ -16,9 +17,7 @@ void bubbleSort(int arr[], size_t n)
             if (arr[j] > arr[j + 1])
             {
                 // Swap arr[j] and arr[j+1]
-                int temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                arr[j] = arr[j] + arr[j + 1] - (arr[j + 1] = arr[j]);
                 swapped = 1;
             }
         // If no two elements were swapped by inner loop, the array is sorted
@@ -31,6 +30,7 @@ void bubbleSort(int arr[], size_t n)
 // Function to perform iterative selection sort on an array of integers
 void selectionSort(int arr[], size_t n)
 {
+    toString(arr, n);
     for (size_t i = 0; i < n - 1; i++)
     {
         size_t min_index = i;
@@ -39,15 +39,15 @@ void selectionSort(int arr[], size_t n)
                 min_index = j;
 
         // Swap the found minimum element with the first element
-        int temp = arr[min_index];
-        arr[min_index] = arr[i];
-        arr[i] = temp;
+        arr[min_index] = arr[min_index] + arr[i] - (arr[i] = arr[min_index]);
+
     }
     toString(arr, n);
 }
 
 void insertionSort(int arr[], size_t n)
 {
+    toString(arr, n);
     for (size_t i = 1; i < n; i++)
     {
         int key = arr[i];
@@ -67,6 +67,7 @@ void insertionSort(int arr[], size_t n)
 
 void bucketSort(int arr[], size_t n)
 {
+    toString(arr, n);
     int max = arr[0];
     int min = arr[0];
 
@@ -120,6 +121,7 @@ void bucketSort(int arr[], size_t n)
 
 void shellSort(int arr[], size_t n)
 {
+    toString(arr, n);
     for (size_t gap = n / 2; gap > 0; gap /= 2)
         for (size_t i = gap; i < n; i++)
         {
@@ -135,6 +137,7 @@ void shellSort(int arr[], size_t n)
 
 void merge(int arr[], size_t left_start, size_t mid, size_t right_end)
 {
+    toString(arr, right_end - left_start + 1);
     size_t left_size = mid - left_start + 1;
     size_t right_size = right_end - mid;
 
@@ -202,6 +205,7 @@ void insertionSorted(int arr[], size_t left, size_t right)
 
 void timSort(int arr[], size_t n)
 {
+    toString(arr, n);
     for (size_t i = 0; i < n; i += MIN_MERGE)
     {
         size_t left = i;
@@ -223,6 +227,7 @@ void timSort(int arr[], size_t n)
 
 void quickSort(int arr[], size_t n)
 {
+    toString(arr, n);
     // Create an auxiliary stack
     int *stack = (int *)malloc(n * sizeof(int));
 
@@ -290,13 +295,12 @@ int partition(int arr[], int left, int right)
 // Function to swap two elements in an array
 void swap(int *a, int *b)
 {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+    *a = *a + *b - (*b = *a);
 }
 
 void countingSort(int arr[], size_t n)
 {
+    toString(arr, n);
     // Find the maximum element to determine the range
     int max = arr[0];
     for (size_t i = 1; i < n; i++)
@@ -345,6 +349,7 @@ size_t getNextGap(size_t gap)
 
 void combSort(int arr[], size_t n)
 {
+    toString(arr, n);
     size_t gap = n;
 
     bool swapped = true;
@@ -367,6 +372,7 @@ void combSort(int arr[], size_t n)
 
 void pigeonholeSort(int arr[], size_t n)
 {
+    toString(arr, n);
     int min = arr[0];
     int max = arr[0];
 
@@ -406,6 +412,7 @@ void pigeonholeSort(int arr[], size_t n)
 
 void cycleSort(int arr[], size_t n)
 {
+    toString(arr, n);
     for (size_t cycleStart = 0; cycleStart < n - 1; cycleStart++)
     {
         int item = arr[cycleStart];
@@ -443,6 +450,7 @@ void cycleSort(int arr[], size_t n)
 
 void cocktailShakerSort(int arr[], size_t n)
 {
+    toString(arr, n);
     int swapped;
 
     do
@@ -473,6 +481,7 @@ void cocktailShakerSort(int arr[], size_t n)
 
 void beadSort(int arr[], size_t n)
 {
+    toString(arr, n);
     int *beads = (int *)calloc(n, sizeof(int));
 
     // Store beads
