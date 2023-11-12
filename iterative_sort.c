@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include <pthread.h>
 
+#include "print.c"
+
+
 #define MIN_MERGE 32
 
 // Function to perform Bubble Sort iteratively
@@ -225,6 +228,33 @@ void timSort(int arr[], size_t n)
     toString(arr, n);
 }
 
+// Function to swap two elements in an array
+void swap(int *a, int *b)
+{
+    *a = *a + *b - (*b = *a);
+}
+
+// Function to partition the array into two segments
+int partition(int arr[], int left, int right)
+{
+    int pivot = arr[right]; // Pivot element
+    int i = left - 1;       // Index of smaller element
+
+    for (int j = left; j <= right - 1; j++)
+    {
+        // If the current element is smaller than or equal to the pivot
+        if (arr[j] <= pivot)
+        {
+            i++; // Increment index of smaller element
+            swap(&arr[i], &arr[j]);
+        }
+    }
+
+    // Swap the pivot element with the element at index i+1
+    swap(&arr[i + 1], &arr[right]);
+    return i + 1;
+}
+
 void quickSort(int arr[], size_t n)
 {
     toString(arr, n);
@@ -269,33 +299,6 @@ void quickSort(int arr[], size_t n)
     // Free the auxiliary stack
     free(stack);
     toString(arr, n);
-}
-
-// Function to partition the array into two segments
-int partition(int arr[], int left, int right)
-{
-    int pivot = arr[right]; // Pivot element
-    int i = left - 1;       // Index of smaller element
-
-    for (int j = left; j <= right - 1; j++)
-    {
-        // If the current element is smaller than or equal to the pivot
-        if (arr[j] <= pivot)
-        {
-            i++; // Increment index of smaller element
-            swap(&arr[i], &arr[j]);
-        }
-    }
-
-    // Swap the pivot element with the element at index i+1
-    swap(&arr[i + 1], &arr[right]);
-    return i + 1;
-}
-
-// Function to swap two elements in an array
-void swap(int *a, int *b)
-{
-    *a = *a + *b - (*b = *a);
 }
 
 void countingSort(int arr[], size_t n)

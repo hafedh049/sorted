@@ -52,8 +52,8 @@ void recursiveMergeSort(int arr[], size_t left_start, size_t right_end)
     if (left_start < right_end)
     {
         size_t mid = left_start + (right_end - left_start) / 2;
-        optimizedMergeSort(arr, left_start, mid);
-        optimizedMergeSort(arr, mid + 1, right_end);
+        recursiveMergeSort(arr, left_start, mid);
+        recursiveMergeSort(arr, mid + 1, right_end);
         merge(arr, left_start, mid, right_end);
     }
 }
@@ -83,12 +83,12 @@ void recursiveQuickSort(int arr[], size_t low, size_t high)
 
         if (pi - low < high - pi)
         {
-            optimizedQuickSort(arr, low, pi - 1);
+            recursiveQuickSort(arr, low, pi - 1);
             low = pi + 1;
         }
         else
         {
-            optimizedQuickSort(arr, pi + 1, high);
+            recursiveQuickSort(arr, pi + 1, high);
             high = pi - 1;
         }
     }
@@ -176,7 +176,7 @@ void recursiveRadixSort(int arr[], size_t n)
     }
 }
 
-void swap(int *a, int *b)
+void swaper(int *a, int *b)
 {
     *a = *a + *b - (*b = *a);
 }
@@ -190,7 +190,7 @@ void recursiveBitonicMerge(int arr[], size_t low, size_t cnt, int dir)
         {
             if (dir == (arr[i] > arr[i + k]))
             {
-                swap(&arr[i], &arr[i + k]);
+                swaper(&arr[i], &arr[i + k]);
             }
         }
         recursiveBitonicMerge(arr, low, k, dir);
@@ -217,7 +217,7 @@ void recursiveBitonicSorter(int arr[], size_t low, size_t cnt, int dir)
 
 void recursiveBitonicSort(int arr[], size_t n)
 {
-    bitonicSorter(arr, 0, n, 1);
+    recursiveBitonicSorter(arr, 0, n, 1);
 }
 
 void flip(int arr[], size_t i)
@@ -290,7 +290,7 @@ void recursiveStoogeSorter(int arr[], size_t low, size_t high)
         return;
 
     if (arr[low] > arr[high])
-        swap(&arr[low], &arr[high]);
+        swaper(&arr[low], &arr[high]);
 
     if (high - low + 1 > 2)
     {
